@@ -15,11 +15,12 @@ for x in range(len(resistances)):
 #if voltage is 3.3, use 4.7kΩ resistor, if voltage is 5v, use 10kΩ resistor
 adc = MCP3008(channel=0)
 count = 0
-values = []
+volts = [] #once i connect to the vane and get the readings, I will fill this in with values
 while True:
   wind = round((adc.value * 5), 3)
-  if not wind in values:
-    values.append(wind)
+  if not wind in volts:
+    volts.append(wind)
     count += 1
     print(adc.value)
+
 
