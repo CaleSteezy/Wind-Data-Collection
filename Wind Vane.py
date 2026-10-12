@@ -1,18 +1,19 @@
-from gpiozero import MCP3008
-import time
-
-def voltage_div(r1, r2, v_in):
-  v_out = (v_in * r1)/(r1 + r2) #v_in is voltage input and v_out is the voltage output
-  return round(v_out, 3)
-
 
 
 resistances = [33000, 6570, 8200, 891, 1000, 688, 2200, 1410, 3900,
                3140, 16000, 14120, 120000, 42120, 64900, 21880]
 # got these from the data sheet, assuming its correct
+
+def voltage_div(r1, r2, v_in):
+  v_out = (v_in * r1)/(r1 + r2) #v_in is voltage input and v_out is the voltage output
+  return round(v_out, 3)
+
 for x in range(len(resistances)):
   print(resistances[x],voltage_div(4700, resistances[x], 3.3)) 
 #if voltage is 3.3, use 4.7kΩ resistor, if voltage is 5v, use 10kΩ resistor
+
+from gpiozero import MCP3008
+import time
 
 adc = MCP3008(channel=0)
 count = 0
@@ -24,4 +25,4 @@ while True:
   else:
     print('Match: ' + str(wind))
 
-
+#if the wind values are in the volts list, I will use the voltage divider, lines 3-12, and then use the data sheet to find the corresponding angle.
