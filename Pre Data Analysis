@@ -1,9 +1,26 @@
 import pandas as pd
 import requests 
+import sqlite3
+
 url = "https://data.cityofchicago.org/api/v3/views/4z7n-5k6z/query.json"
 response = requests.get(url)
 data = response.json()
 city_data = pd.DataFrame(data)
 city_data.to_csv("city_data.csv", index=False)
+cd_read = pd.read_csv("city_data.csv")
+column_names = list(cd_read.columns)
 
-print(city_data)
+print(column_names)
+
+con = sqlite3.connect(":memory:")
+cd_read.to_sql("city_of_chicago", con, index=False, if_exists="replace")
+
+#for sqlite, using the three quote notation allows the string to be written across multiple lines, for better readability 
+query = """
+SELECT station_name, measurement_timestamp, air_temperature, wind_direction, wind_speed, maximum_wind_speed, barometric_pressure
+FROM city_of_chicago"""
+print(pd.read_sql_query(query, con))
+
+
+
+
