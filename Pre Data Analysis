@@ -1,6 +1,7 @@
 import pandas as pd
 import requests 
 import sqlite3
+from math import pi
 
 url = "https://data.cityofchicago.org/api/v3/views/4z7n-5k6z/query.json"
 response = requests.get(url)
@@ -12,15 +13,27 @@ column_names = list(cd_read.columns)
 
 print(column_names)
 
+city_data["wind_direction"] = pd.to_numeric(city_data["wind_direction"])
+city_data['wind_direction'] = city_data['wind_direction'].astype('float64')
+
 con = sqlite3.connect(":memory:")
 cd_read.to_sql("city_of_chicago", con, index=False, if_exists="replace")
 
 #for sqlite, using the three quote notation allows the string to be written across multiple lines, for better readability 
+# you can leave them as one line with nothing inbetween, functions in all caps
 query = """
-SELECT station_name, measurement_timestamp, air_temperature, wind_direction, wind_speed, maximum_wind_speed, barometric_pressure
+SELECT station_name, air_temperature, wind_direction, wind_speed, maximum_wind_speed, barometric_pressure
 FROM city_of_chicago"""
 print(pd.read_sql_query(query, con))
 
+                                     
+wind_angle = """
+SELECT wind_direction,
+    wind_direction * 0.01745329251 AS wind_direction_rad
+FROM city_of_chicago
+LIMIT 10
+"""
 
+print(pd.read_sql_query(wind_angle, con))
 
 
