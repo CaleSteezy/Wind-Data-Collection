@@ -14,7 +14,11 @@ column_names = list(cd_read.columns)
 print(column_names)
 
 city_data["wind_direction"] = pd.to_numeric(city_data["wind_direction"])
+city_data['air_temperature'] = city_data['air_temperature'].astype('float64')
 city_data['wind_direction'] = city_data['wind_direction'].astype('float64')
+city_data['wind_speed'] = city_data['wind_speed'].astype('float64')
+city_data['maximum_wind_speed'] = city_data['maximum_wind_speed'].astype('float64')
+city_data['barometric_pressure'] = city_data['barometric_pressure'].astype('float64')
 
 con = sqlite3.connect(":memory:")
 cd_read.to_sql("city_of_chicago", con, index=False, if_exists="replace")
@@ -26,7 +30,7 @@ SELECT station_name, air_temperature, wind_direction, wind_speed, maximum_wind_s
 FROM city_of_chicago"""
 print(pd.read_sql_query(query, con))
 
-                                     
+                                    
 wind_angle = """
 SELECT wind_direction,
     wind_direction * 0.01745329251 AS wind_direction_rad
