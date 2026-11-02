@@ -55,10 +55,21 @@ print(x.head())
 print("The predictions are")
 print(city_model.predict(x.head()))
 
-train_X, val_X, train_y, val_y = train_test_split(x, y, random_state = 0)
+train_x, val_x, train_y, val_y = train_test_split(x, y, random_state = 0)
 city_model = DecisionTreeRegressor()
-city_model.fit(train_X, train_y)
-val_predictions = city_model.predict(val_X)
+city_model.fit(train_x, train_y)
+val_predictions = city_model.predict(val_x)
 mean_absolute_error(val_y, val_predictions)
 print(mean_absolute_error(val_y, val_predictions))
 
+
+def get_mae(max_leaf_nodes, train_x, val_x, train_y, val_y):
+    city_model2 = DecisionTreeRegressor(max_leaf_nodes=max_leaf_nodes)
+    city_model2.fit(train_x, train_y)
+    preds_val = city_model2.predict(val_x)
+    mae = mean_absolute_error(val_y, preds_val)
+    return(mae)
+
+for max_leaf_nodes in [5,50,500,5000]:
+    my_mae = get_mae(max_leaf_nodes, train_x, val_x, train_y, val_y)
+    print(f"Max leaf nodes: {max_leaf_nodes} \t\t Mean Absolute Error: {my_mae:.8f}")
