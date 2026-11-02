@@ -2,6 +2,9 @@ import pandas as pd
 import requests 
 import sqlite3
 from math import pi
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_absolute_error 
+from sklearn.model_selection import train_test_split
 
 url = "https://data.cityofchicago.org/api/v3/views/4z7n-5k6z/query.json"
 response = requests.get(url)
@@ -28,7 +31,7 @@ cd_read.to_sql("city_of_chicago", con, index=False, if_exists="replace")
 query = """
 SELECT station_name, air_temperature, wind_direction, wind_speed, maximum_wind_speed, barometric_pressure
 FROM city_of_chicago"""
-print(pd.read_sql_query(query, con))
+print(pd.read_sql_query(query, con)) 
 
                                     
 wind_angle = """
@@ -40,4 +43,22 @@ LIMIT 10
 
 print(pd.read_sql_query(wind_angle, con))
 
+y = city_data.wind_speed #This is my target 
+wind_features = ['wind_direction', 'air_temperature', 'maximum_wind_speed', 'barometric_pressure']
+x = city_data[wind_features]
+
+city_model = DecisionTreeRegressor(random_state=1)
+city_model.fit(x,y)
+
+print("For the first points of data:")
+print(x.head())
+print("The predictions are")
+print(city_model.predict(x.head()))
+
+train_X, val_X, train_y, val_y = train_test_split(x, y, random_state = 0)
+city_model = DecisionTreeRegressor()
+city_model.fit(train_X, train_y)
+val_predictions = city_model.predict(val_X)
+mean_absolute_error(val_y, val_predictions)
+print(mean_absolute_error(val_y, val_predictions))
 
