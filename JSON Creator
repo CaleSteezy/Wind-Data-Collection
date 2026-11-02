@@ -1,2 +1,17 @@
 import pandas as pd
 import requests
+import json
+
+url = input("What is the API url: ")
+file_name = input("What would you like to name your file: ")
+
+response = requests.get(url)
+response.raise_for_status()
+data = response.json()
+with open(f"{file_name}.json", "w") as f:
+    json.dump(data, f, indent=4)
+
+your_data = pd.json_normalize(data)
+your_data.to_csv(f"{file_name}.csv", index=False)
+
+print(f"Saved {file_name}.csv and {file_name}.json")
