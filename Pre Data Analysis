@@ -5,6 +5,7 @@ from math import pi
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_absolute_error 
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
 
 url = "https://data.cityofchicago.org/api/v3/views/4z7n-5k6z/query.json"
 response = requests.get(url)
@@ -56,20 +57,22 @@ print("The predictions are")
 print(city_model.predict(x.head()))
 
 train_x, val_x, train_y, val_y = train_test_split(x, y, random_state = 0)
-city_model = DecisionTreeRegressor()
+city_model = DecisionTreeRegressor(max_leaf_nodes= 48)
 city_model.fit(train_x, train_y)
 val_predictions = city_model.predict(val_x)
 mean_absolute_error(val_y, val_predictions)
 print(mean_absolute_error(val_y, val_predictions))
 
+city2_model = RandomForestRegressor(random_state=1)
+city2_model.fit(train_x, train_y)
+preds2 = city2_model.predict(val_x)
+print(mean_absolute_error(val_y, preds2))
 
-def get_mae(max_leaf_nodes, train_x, val_x, train_y, val_y):
-    city_model2 = DecisionTreeRegressor(max_leaf_nodes=max_leaf_nodes)
-    city_model2.fit(train_x, train_y)
-    preds_val = city_model2.predict(val_x)
-    mae = mean_absolute_error(val_y, preds_val)
-    return(mae)
 
-for max_leaf_nodes in [43, 44, 45, 46, 47, 48, 49, 53, 55, 57]:
-    my_mae = get_mae(max_leaf_nodes, train_x, val_x, train_y, val_y)
-    print(f"Max leaf nodes: {max_leaf_nodes} \t\t Mean Absolute Error: {my_mae:.8f}")
+#def get_mae(max_leaf_nodes, train_x, val_x, train_y, val_y):
+    # preds_val = city_model2.predict(val_x)
+    #mae = mean_absolute_error(val_y, preds_val)
+    #return(mae)
+
+#for max_leaf_nodes in [43, 44, 45, 46, 47, 48, 49, 53, 55, 57]:
+    ##print(f"Max leaf nodes: {max_leaf_nodes} \t\t Mean Absolute Error: {my_mae:.8f}")
